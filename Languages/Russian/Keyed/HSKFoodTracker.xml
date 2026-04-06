@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+	<FT_WidgetFood>Еда: {0} дн.</FT_WidgetFood>
+	<FT_WidgetFood2>Еда {0} / {1} дн.</FT_WidgetFood2>
+	<FT_WidgetTooltip>Готовая: {0} дн.\nСырая: {1} дн.\nПотребление: {2}/день</FT_WidgetTooltip>
+	<FT_FoodTitle>Запасы еды</FT_FoodTitle>
+	<FT_TotalDays>Всего запасов</FT_TotalDays>
+	<FT_Days>дн.</FT_Days>
+	<FT_MealDays>Готовая еда</FT_MealDays>
+	<FT_RawDays>Сырая еда</FT_RawDays>
+	<FT_DailyTotal>Потребление колонии: {0} питательности/день</FT_DailyTotal>
+	<FT_PerDay>день</FT_PerDay>
+	<FT_FoodInventory>Еда на карте:</FT_FoodInventory>
+	<FT_MealsList>Готовые блюда:</FT_MealsList>
+	<FT_RawList>Сырая еда:</FT_RawList>
+	<FT_Nutr>пит.</FT_Nutr>
+	<FT_DragHint>ПКМ + перетаскивание для перемещения</FT_DragHint>
+	<FT_SpoilingList>Скоро испортится:</FT_SpoilingList>
+	<FT_WidgetSpoil2d>Испорт.: {0} пит. за 2д</FT_WidgetSpoil2d>
+	<FT_WidgetSpoil>Исп. еды на: {0} дн.</FT_WidgetSpoil>
+	<FT_WidgetSpoil2>Исп. за 2д: {0} дн.</FT_WidgetSpoil2>
+	<FT_WidgetSpoil5>Исп. за 5д: {0} дн.</FT_WidgetSpoil5>
+	<FT_SpoilingTitle>Скоропортящаяся еда</FT_SpoilingTitle>
+	<FT_SpoilIn2d>2 дня: {0} пит.</FT_SpoilIn2d>
+	<FT_SpoilIn5d>5 дней: {0} пит.</FT_SpoilIn5d>
+	<FT_Within2Days>В течение 2 дней:</FT_Within2Days>
+	<FT_Within5Days>В течение 5 дней:</FT_Within5Days>
+</LanguageData>

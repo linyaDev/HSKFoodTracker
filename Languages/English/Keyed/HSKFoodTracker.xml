@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+	<FT_WidgetFood>Food: {0} days</FT_WidgetFood>
+	<FT_WidgetFood2>Food {0} / {1} days</FT_WidgetFood2>
+	<FT_WidgetTooltip>Meals: {0} days\nRaw food: {1} days\nDaily consumption: {2}</FT_WidgetTooltip>
+	<FT_FoodTitle>Food Supply</FT_FoodTitle>
+	<FT_TotalDays>Total food supply</FT_TotalDays>
+	<FT_Days>days</FT_Days>
+	<FT_MealDays>Meals</FT_MealDays>
+	<FT_RawDays>Raw food</FT_RawDays>
+	<FT_DailyTotal>Colony consumption: {0} nutrition/day</FT_DailyTotal>
+	<FT_PerDay>day</FT_PerDay>
+	<FT_FoodInventory>Food on map:</FT_FoodInventory>
+	<FT_MealsList>Cooked meals:</FT_MealsList>
+	<FT_RawList>Raw food:</FT_RawList>
+	<FT_Nutr>nutr.</FT_Nutr>
+	<FT_DragHint>Right-click drag to move widget</FT_DragHint>
+	<FT_SpoilingList>Spoiling soon:</FT_SpoilingList>
+	<FT_WidgetSpoil2d>Spoil.: {0} nutr. in 2d</FT_WidgetSpoil2d>
+	<FT_WidgetSpoil>Spoil. food for: {0} days</FT_WidgetSpoil>
+	<FT_WidgetSpoil2>Spoil in 2d: {0} days</FT_WidgetSpoil2>
+	<FT_WidgetSpoil5>Spoil in 5d: {0} days</FT_WidgetSpoil5>
+	<FT_SpoilingTitle>Spoiling Food</FT_SpoilingTitle>
+	<FT_SpoilIn2d>2 days: {0} nutr.</FT_SpoilIn2d>
+	<FT_SpoilIn5d>5 days: {0} nutr.</FT_SpoilIn5d>
+	<FT_Within2Days>Within 2 days:</FT_Within2Days>
+	<FT_Within5Days>Within 5 days:</FT_Within5Days>
+</LanguageData>
