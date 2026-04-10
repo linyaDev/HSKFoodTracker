@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -11,6 +12,16 @@ public class FoodTrackerOverlay : GameComponent
     private static readonly Color Red = new Color(0.9f, 0.3f, 0.3f);
     private static readonly Color BgColor = new Color(0.1f, 0.1f, 0.1f, 0.7f);
 
+    // Fire particles
+    private struct Ember
+    {
+        public float x, y, speed, life, maxLife, size;
+    }
+    private static readonly List<Ember> embers = new List<Ember>();
+    private static float lastEmberTime;
+    private static readonly Color EmberOrange = new Color(1f, 0.6f, 0.1f);
+    private static readonly Color EmberRed = new Color(1f, 0.2f, 0.05f);
+
     private static bool dragging;
     private static Vector2 dragOffset;
     private const float Width = 175f;
@@ -20,7 +31,7 @@ public class FoodTrackerOverlay : GameComponent
         get
         {
             var s = HSKFoodTrackerMod.Settings;
-            if (s == null) return new Vector2(4f, 40f);
+            if (s == null) return new Vector2(200f, 200f);
             return new Vector2(s.widgetX, s.widgetY);
         }
         set
@@ -52,7 +63,7 @@ public class FoodTrackerOverlay : GameComponent
         var pos = WidgetPos;
         if (pos.x < 0f)
         {
-            pos = new Vector2(4f, 40f);
+            pos = new Vector2(200f, 200f);
             WidgetPos = pos;
         }
 
@@ -92,12 +103,27 @@ public class FoodTrackerOverlay : GameComponent
         Widgets.DrawBox(widgetRect, 1);
 
         // Color based on days
+        bool noMeals = tracker.MealDays < 0.1f;
         if (days > 10f)
-            GUI.color = Green;
+            GUI.color = noMeals ? Yellow : Green;
         else if (days > 4f)
             GUI.color = Yellow;
+        else if (days > 0.1f)
+            GUI.color = Red;
         else
             GUI.color = Red;
+
+        // Pulsing + embers when no cooked meals
+        if (noMeals)
+        {
+            float pulse = Mathf.PingPong(Time.realtimeSinceStartup * 2f, 1f);
+            GUI.color = Color.Lerp(GUI.color, new Color(1f, 0.1f, 0.1f), pulse * 0.5f);
+            Widgets.DrawBoxSolid(widgetRect, new Color(0.4f, 0f, 0f, 0.15f * pulse));
+            SpawnEmbers(widgetRect);
+        }
+
+        // Update and draw embers
+        DrawEmbers();
 
         // Line 1: Food days
         Text.Font = GameFont.Small;
@@ -106,7 +132,7 @@ public class FoodTrackerOverlay : GameComponent
         string mealStr = tracker.MealDays >= 999f ? "∞" : tracker.MealDays.ToString("F1");
         string rawStr = tracker.RawDays >= 999f ? "∞" : tracker.RawDays.ToString("F1");
         Rect line1 = new Rect(widgetRect.x, widgetRect.y + 2f, widgetRect.width, 20f);
-        Widgets.Label(line1, "FT_WidgetFood2".Translate(mealStr, rawStr));
+        Widgets.Label(line1, string.Format("FT_WidgetFood2".Translate().RawText, mealStr, rawStr));
 
         float lineY = widgetRect.y + 22f;
         Text.Font = GameFont.Tiny;
@@ -156,5 +182,52 @@ public class FoodTrackerOverlay : GameComponent
                 tracker.DailyConsumption.ToString("F1"))
                 + "\n\n" + "FT_DragHint".Translate());
         }
+    }
+
+    private static void SpawnEmbers(Rect widgetRect)
+    {
+        float now = Time.realtimeSinceStartup;
+        if (now - lastEmberTime < 0.15f)
+            return;
+        lastEmberTime = now;
+
+        embers.Add(new Ember
+        {
+            x = widgetRect.x + Random.Range(5f, widgetRect.width - 5f),
+            y = widgetRect.yMax,
+            speed = Random.Range(15f, 35f),
+            life = 0f,
+            maxLife = Random.Range(0.8f, 1.5f),
+            size = Random.Range(3f, 6f)
+        });
+    }
+
+    private static void DrawEmbers()
+    {
+        if (embers.Count == 0)
+            return;
+
+        float dt = Time.deltaTime;
+        for (int i = embers.Count - 1; i >= 0; i--)
+        {
+            var e = embers[i];
+            e.life += dt;
+            if (e.life >= e.maxLife)
+            {
+                embers.RemoveAt(i);
+                continue;
+            }
+            e.y += e.speed * dt;
+            e.x += Mathf.Sin(e.life * 5f) * 0.5f;
+            embers[i] = e;
+
+            float t = e.life / e.maxLife;
+            Color c = Color.Lerp(EmberOrange, EmberRed, t);
+            c.a = 1f - t;
+            float s = e.size * (1f - t * 0.5f);
+            GUI.color = c;
+            Widgets.DrawBoxSolid(new Rect(e.x - s / 2f, e.y - s / 2f, s, s), c);
+        }
+        GUI.color = Color.white;
     }
 }

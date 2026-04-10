@@ -1,8 +1,0 @@
-D:\Mods\HSKFoodTracker\Source\HSKFoodTracker\obj\Release\HSKFoodTracker.v15.csproj.AssemblyReference.cache
-D:\Mods\HSKFoodTracker\Source\HSKFoodTracker\obj\Release\HSKFoodTracker.v15.IgnoresAccessChecksTo.cs
-D:\Mods\HSKFoodTracker\Source\HSKFoodTracker\obj\Release\HSKFoodTracker.v15.GeneratedMSBuildEditorConfig.editorconfig
-D:\Mods\HSKFoodTracker\Source\HSKFoodTracker\obj\Release\HSKFoodTracker.v15.csproj.CoreCompileInputs.cache
-D:\Mods\HSKFoodTracker\1.5\Assemblies\HSKFoodTracker.dll
-D:\Mods\HSKFoodTracker\1.5\Assemblies\HSKFoodTracker.pdb
-D:\Mods\HSKFoodTracker\Source\HSKFoodTracker\obj\Release\HSKFoodTracker.dll
-D:\Mods\HSKFoodTracker\Source\HSKFoodTracker\obj\Release\HSKFoodTracker.pdb

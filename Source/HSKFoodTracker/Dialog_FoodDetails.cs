@@ -17,7 +17,7 @@ public class Dialog_FoodDetails : Window
     private static readonly Color RowBg = new Color(0.2f, 0.2f, 0.2f, 0.3f);
     private static readonly Color SectionBg = new Color(0.15f, 0.15f, 0.15f, 0.8f);
 
-    public override Vector2 InitialSize => new Vector2(450f, 600f);
+    public override Vector2 InitialSize => new Vector2(520f, 600f);
 
     public Dialog_FoodDetails()
     {
@@ -87,7 +87,11 @@ public class Dialog_FoodDetails : Window
 
         float mealsHeight = meals.Count > 0 ? 26f + meals.Count * 24f + 6f : 0f;
         float rawHeight = rawFoods.Count > 0 ? 26f + rawFoods.Count * 24f + 6f : 0f;
-        float pawnHeight = 26f + pawns.Count * 24f;
+        // Each category: header 26 + pawns * 24 + padding 4; plus daily total header 26
+        int categoryCount = 0;
+        foreach (PawnFoodCategory cat in System.Enum.GetValues(typeof(PawnFoodCategory)))
+            if (pawns.Any(p => p.category == cat)) categoryCount++;
+        float pawnHeight = 26f + categoryCount * 30f + pawns.Count * 24f;
         float totalListHeight = mealsHeight + rawHeight + pawnHeight + 30f;
 
         Rect outRect = new Rect(0f, y, inRect.width, inRect.height - y - 50f);
@@ -133,19 +137,58 @@ public class Dialog_FoodDetails : Window
         GUI.color = Color.white;
         rowY += 26f;
 
-        for (int i = 0; i < pawns.Count; i++)
+        rowY = DrawPawnGroup(viewRect.width, rowY, pawns, PawnFoodCategory.Colonist, "FT_Colonists");
+        rowY = DrawPawnGroup(viewRect.width, rowY, pawns, PawnFoodCategory.Prisoner, "FT_Prisoners");
+        rowY = DrawPawnGroup(viewRect.width, rowY, pawns, PawnFoodCategory.Slave, "FT_Slaves");
+        rowY = DrawPawnGroup(viewRect.width, rowY, pawns, PawnFoodCategory.Guest, "FT_Guests");
+
+        Widgets.EndScrollView();
+    }
+
+    private static readonly Color ColonistColor = new Color(0.8f, 0.8f, 1f);
+    private static readonly Color PrisonerColor = new Color(1f, 0.7f, 0.4f);
+    private static readonly Color SlaveColor = new Color(1f, 0.5f, 0.5f);
+    private static readonly Color GuestColor = new Color(0.6f, 0.9f, 0.6f);
+
+    private static Color GetCategoryColor(PawnFoodCategory cat)
+    {
+        switch (cat)
         {
-            var info = pawns[i];
-            Rect rowRect = new Rect(0f, rowY, viewRect.width, 22f);
+            case PawnFoodCategory.Prisoner: return PrisonerColor;
+            case PawnFoodCategory.Slave: return SlaveColor;
+            case PawnFoodCategory.Guest: return GuestColor;
+            default: return ColonistColor;
+        }
+    }
+
+    private float DrawPawnGroup(float width, float rowY, List<PawnFoodInfo> allPawns, PawnFoodCategory category, string labelKey)
+    {
+        var group = allPawns.Where(p => p.category == category).ToList();
+        if (group.Count == 0)
+            return rowY;
+
+        float groupTotal = group.Sum(p => p.dailyNutrition);
+        Color catColor = GetCategoryColor(category);
+
+        GUI.color = catColor;
+        Widgets.Label(new Rect(0f, rowY, width, 24f),
+            labelKey.Translate() + " (" + group.Count + ") — " + groupTotal.ToString("F2") + " / " + "FT_PerDay".Translate());
+        GUI.color = Color.white;
+        rowY += 26f;
+
+        for (int i = 0; i < group.Count; i++)
+        {
+            var info = group[i];
+            Rect rowRect = new Rect(0f, rowY, width, 22f);
 
             if (i % 2 == 0)
                 Widgets.DrawBoxSolid(rowRect, RowBg);
 
-            Widgets.Label(new Rect(5f, rowY, viewRect.width * 0.6f, 22f), info.pawnName);
+            Widgets.Label(new Rect(15f, rowY, width * 0.6f, 22f), info.pawnName);
 
             GUI.color = DimText;
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(new Rect(viewRect.width - 120f, rowY, 115f, 22f),
+            Widgets.Label(new Rect(width - 120f, rowY, 115f, 22f),
                 info.dailyNutrition.ToString("F2") + " / " + "FT_PerDay".Translate());
             Text.Anchor = TextAnchor.UpperLeft;
             GUI.color = Color.white;
@@ -153,7 +196,8 @@ public class Dialog_FoodDetails : Window
             rowY += 24f;
         }
 
-        Widgets.EndScrollView();
+        rowY += 4f;
+        return rowY;
     }
 
     private float DrawFoodList(float width, float startY, List<FoodItemInfo> items, Color labelColor)
@@ -167,16 +211,23 @@ public class Dialog_FoodDetails : Window
             if (i % 2 == 0)
                 Widgets.DrawBoxSolid(rowRect, RowBg);
 
+            // Count (right-aligned in 50px, fits x9999)
+            Text.Anchor = TextAnchor.MiddleRight;
+            Widgets.Label(new Rect(0f, rowY, 50f, 22f), "x" + food.count);
+            Text.Anchor = TextAnchor.UpperLeft;
+
+            // Icon
             ThingDef def = DefDatabase<ThingDef>.GetNamedSilentFail(food.defName);
             if (def != null)
-                Widgets.ThingIcon(new Rect(2f, rowY, 20f, 20f), def);
+                Widgets.ThingIcon(new Rect(54f, rowY + 1f, 20f, 20f), def);
 
-            Widgets.Label(new Rect(25f, rowY, width * 0.5f, 22f), food.label);
+            // Name — aligned
+            Widgets.Label(new Rect(78f, rowY, width * 0.38f, 22f), food.label);
 
             GUI.color = labelColor;
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(new Rect(width - 180f, rowY, 175f, 22f),
-                "x" + food.count + "  (" + food.nutrition.ToString("F1") + " " + "FT_Nutr".Translate() + ")");
+            Widgets.Label(new Rect(width - 120f, rowY, 115f, 22f),
+                "(" + food.nutrition.ToString("F1") + " " + "FT_Nutr".Translate() + ")");
             Text.Anchor = TextAnchor.UpperLeft;
             GUI.color = Color.white;
 

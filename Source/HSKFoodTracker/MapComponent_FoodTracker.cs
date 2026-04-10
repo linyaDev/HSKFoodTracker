@@ -29,6 +29,23 @@ public class MapComponent_FoodTracker : MapComponent
     {
     }
 
+    private void AddPawnConsumption(Pawn pawn, PawnFoodCategory category)
+    {
+        if (pawn.needs?.food == null)
+            return;
+
+        float perTick = pawn.needs.food.FoodFallPerTickAssumingCategory(HungerCategory.Fed);
+        float perDay = perTick * 60000f;
+        DailyConsumption += perDay;
+
+        PawnConsumptions.Add(new PawnFoodInfo
+        {
+            pawnName = pawn.LabelShortCap,
+            dailyNutrition = perDay,
+            category = category
+        });
+    }
+
     public override void MapComponentTick()
     {
         if (firstRun)
@@ -86,19 +103,20 @@ public class MapComponent_FoodTracker : MapComponent
         // Calculate per-pawn consumption
         foreach (var pawn in map.mapPawns.FreeColonistsSpawned)
         {
-            if (pawn.needs?.food == null)
-                continue;
-
-            float perTick = pawn.needs.food.FoodFallPerTickAssumingCategory(HungerCategory.Fed);
-            float perDay = perTick * 60000f;
-            DailyConsumption += perDay;
-
-            PawnConsumptions.Add(new PawnFoodInfo
-            {
-                pawnName = pawn.LabelShortCap,
-                dailyNutrition = perDay
-            });
+            if (pawn.IsQuestLodger())
+                AddPawnConsumption(pawn, PawnFoodCategory.Guest);
+            else
+                AddPawnConsumption(pawn, PawnFoodCategory.Colonist);
         }
+
+        foreach (var pawn in map.mapPawns.PrisonersOfColonySpawned)
+            AddPawnConsumption(pawn, PawnFoodCategory.Prisoner);
+
+        foreach (var pawn in map.mapPawns.SlavesOfColonySpawned)
+            AddPawnConsumption(pawn, PawnFoodCategory.Slave);
+
+        // Sort by category
+        PawnConsumptions.Sort((a, b) => a.category.CompareTo(b.category));
 
         // Scan for spoiling food (within 5 days)
         const int fiveDaysTicks = 300000;
@@ -126,6 +144,7 @@ public class MapComponent_FoodTracker : MapComponent
             float daysLeft = ticksUntilRot / 60000f;
             SpoilingFood.Add(new SpoilingFoodInfo
             {
+                defName = thing.def.defName,
                 label = thing.LabelCapNoCount,
                 count = thing.stackCount,
                 daysLeft = daysLeft,
@@ -134,7 +153,7 @@ public class MapComponent_FoodTracker : MapComponent
         }
         SpoilingFood.Sort((a, b) => a.daysLeft.CompareTo(b.daysLeft));
         SpoilingIn2DaysNutrition = SpoilingFood.Where(f => f.daysLeft <= 2f).Sum(f => f.nutrition);
-        SpoilingIn5DaysNutrition = SpoilingFood.Where(f => f.daysLeft <= 5f).Sum(f => f.nutrition);
+        SpoilingIn5DaysNutrition = SpoilingFood.Where(f => f.daysLeft > 2f && f.daysLeft <= 5f).Sum(f => f.nutrition);
 
         // Calculate days
         if (DailyConsumption > 0.001f)
@@ -152,10 +171,19 @@ public class MapComponent_FoodTracker : MapComponent
     }
 }
 
+public enum PawnFoodCategory : byte
+{
+    Colonist,
+    Prisoner,
+    Slave,
+    Guest
+}
+
 public struct PawnFoodInfo
 {
     public string pawnName;
     public float dailyNutrition;
+    public PawnFoodCategory category;
 }
 
 public struct FoodItemInfo
@@ -169,6 +197,7 @@ public struct FoodItemInfo
 
 public struct SpoilingFoodInfo
 {
+    public string defName;
     public string label;
     public int count;
     public float daysLeft;

@@ -20,9 +20,14 @@
 	<FT_WidgetSpoil>Spoil. food for: {0} days</FT_WidgetSpoil>
 	<FT_WidgetSpoil2>Spoil in 2d: {0} days</FT_WidgetSpoil2>
 	<FT_WidgetSpoil5>Spoil in 5d: {0} days</FT_WidgetSpoil5>
+	<FT_WidgetFood2>Food for {0} days</FT_WidgetFood2>
 	<FT_SpoilingTitle>Spoiling Food</FT_SpoilingTitle>
 	<FT_SpoilIn2d>2 days: {0} nutr.</FT_SpoilIn2d>
 	<FT_SpoilIn5d>5 days: {0} nutr.</FT_SpoilIn5d>
 	<FT_Within2Days>Within 2 days:</FT_Within2Days>
 	<FT_Within5Days>Within 5 days:</FT_Within5Days>
+	<FT_Colonists>Colonists</FT_Colonists>
+	<FT_Prisoners>Prisoners</FT_Prisoners>
+	<FT_Slaves>Slaves</FT_Slaves>
+	<FT_Guests>Guests</FT_Guests>
 </LanguageData>

@@ -108,12 +108,26 @@ public class Dialog_SpoilingFood : Window
             if (i % 2 == 0)
                 Widgets.DrawBoxSolid(rowRect, RowBg);
 
+            // Quantity + icon + name (aligned)
             GUI.color = labelColor;
-            Widgets.Label(new Rect(5f, rowY, width * 0.45f, 22f), item.label);
+            Widgets.Label(new Rect(2f, rowY, 35f, 22f), "x" + item.count);
 
+            // Try to find ThingDef for icon (white color for icon)
+            GUI.color = Color.white;
+            ThingDef def = DefDatabase<ThingDef>.GetNamedSilentFail(item.defName);
+            if (def != null)
+            {
+                if (def.uiIcon != null && def.uiIcon != BaseContent.BadTex)
+                    GUI.DrawTexture(new Rect(38f, rowY + 1f, 20f, 20f), def.uiIcon, ScaleMode.ScaleToFit);
+            }
+
+            GUI.color = labelColor;
+            Widgets.Label(new Rect(62f, rowY, width * 0.35f, 22f), item.label);
+
+            // Days left + nutrition (right aligned)
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(new Rect(width - 200f, rowY, 195f, 22f),
-                "x" + item.count + "  " + item.daysLeft.ToString("F1") + " " + "FT_Days".Translate()
+            Widgets.Label(new Rect(width - 160f, rowY, 155f, 22f),
+                item.daysLeft.ToString("F1") + " " + "FT_Days".Translate()
                 + "  (" + item.nutrition.ToString("F1") + " " + "FT_Nutr".Translate() + ")");
             Text.Anchor = TextAnchor.UpperLeft;
             GUI.color = Color.white;
