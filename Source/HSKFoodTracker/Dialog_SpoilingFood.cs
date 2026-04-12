@@ -59,8 +59,8 @@ public class Dialog_SpoilingFood : Window
 
         // Split into 2-day and 5-day lists
         var spoiling = tracker.SpoilingFood;
-        var in2days = spoiling.Where(f => f.daysLeft <= 2f).ToList();
-        var in5days = spoiling.Where(f => f.daysLeft > 2f).ToList();
+        var in2days = spoiling.Where(f => f.daysLeft <= 2f).OrderByDescending(f => f.nutrition).ToList();
+        var in5days = spoiling.Where(f => f.daysLeft > 2f).OrderByDescending(f => f.nutrition).ToList();
 
         float section2h = in2days.Count > 0 ? 26f + in2days.Count * 24f + 6f : 0f;
         float section5h = in5days.Count > 0 ? 26f + in5days.Count * 24f : 0f;

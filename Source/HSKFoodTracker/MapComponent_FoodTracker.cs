@@ -103,6 +103,7 @@ public class MapComponent_FoodTracker : MapComponent
         // Calculate per-pawn consumption
         foreach (var pawn in map.mapPawns.FreeColonistsSpawned)
         {
+            if (pawn.IsSlave) continue;
             if (pawn.IsQuestLodger())
                 AddPawnConsumption(pawn, PawnFoodCategory.Guest);
             else

@@ -81,8 +81,8 @@ public class Dialog_FoodDetails : Window
         // === Scrollable content ===
         var pawns = tracker.PawnConsumptions;
         var foods = tracker.FoodItems;
-        var meals = foods.Where(f => f.isMeal).ToList();
-        var rawFoods = foods.Where(f => !f.isMeal).ToList();
+        var meals = foods.Where(f => f.isMeal).OrderByDescending(f => f.nutrition).ToList();
+        var rawFoods = foods.Where(f => !f.isMeal).OrderByDescending(f => f.nutrition).ToList();
         var spoiling = tracker.SpoilingFood;
 
         float mealsHeight = meals.Count > 0 ? 26f + meals.Count * 24f + 6f : 0f;
