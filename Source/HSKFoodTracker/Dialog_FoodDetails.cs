@@ -81,8 +81,8 @@ public class Dialog_FoodDetails : Window
         // === Scrollable content ===
         var pawns = tracker.PawnConsumptions;
         var foods = tracker.FoodItems;
-        var meals = foods.Where(f => f.isMeal).OrderByDescending(f => f.nutrition).ToList();
-        var rawFoods = foods.Where(f => !f.isMeal).OrderByDescending(f => f.nutrition).ToList();
+        var meals = foods.Where(f => f.isMeal).OrderBy(f => f.excluded).ThenByDescending(f => f.nutrition).ToList();
+        var rawFoods = foods.Where(f => !f.isMeal).OrderBy(f => f.excluded).ThenByDescending(f => f.nutrition).ToList();
         var spoiling = tracker.SpoilingFood;
 
         float mealsHeight = meals.Count > 0 ? 26f + meals.Count * 24f + 6f : 0f;
@@ -224,12 +224,22 @@ public class Dialog_FoodDetails : Window
             // Name — aligned
             Widgets.Label(new Rect(78f, rowY, width * 0.38f, 22f), food.label);
 
-            GUI.color = labelColor;
+            GUI.color = food.excluded ? DimText : labelColor;
             Text.Anchor = TextAnchor.MiddleRight;
-            Widgets.Label(new Rect(width - 120f, rowY, 115f, 22f),
+            Widgets.Label(new Rect(width - 145f, rowY, 115f, 22f),
                 "(" + food.nutrition.ToString("F1") + " " + "FT_Nutr".Translate() + ")");
             Text.Anchor = TextAnchor.UpperLeft;
             GUI.color = Color.white;
+
+            // Checkbox — include in calculation
+            bool included = !food.excluded;
+            Rect cbRect = new Rect(width - 26f, rowY + 2f, 18f, 18f);
+            Widgets.Checkbox(cbRect.position, ref included, 18f);
+            if (included == food.excluded)
+            {
+                HSKFoodTrackerMod.Settings?.ToggleExcluded(food.defName);
+                Find.CurrentMap?.GetComponent<MapComponent_FoodTracker>()?.Recalculate();
+            }
 
             rowY += 24f;
         }

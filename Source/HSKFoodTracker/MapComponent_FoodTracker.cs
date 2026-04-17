@@ -80,15 +80,20 @@ public class MapComponent_FoodTracker : MapComponent
                 continue;
 
             float nutrition = def.GetStatValueAbstract(StatDefOf.Nutrition) * kvp.Value;
-            TotalNutrition += nutrition;
 
             bool isMeal = def.ingestible.preferability >= FoodPreferability.MealAwful
                           || (ThingDefOf.Pemmican != null && def == ThingDefOf.Pemmican)
                           || def.defName == "Pemmican";
-            if (isMeal)
-                MealNutrition += nutrition;
-            else
-                RawNutrition += nutrition;
+
+            bool excluded = HSKFoodTrackerMod.Settings?.IsExcluded(def.defName) == true;
+            if (!excluded)
+            {
+                TotalNutrition += nutrition;
+                if (isMeal)
+                    MealNutrition += nutrition;
+                else
+                    RawNutrition += nutrition;
+            }
 
             FoodItems.Add(new FoodItemInfo
             {
@@ -96,7 +101,8 @@ public class MapComponent_FoodTracker : MapComponent
                 label = def.LabelCap,
                 count = kvp.Value,
                 nutrition = nutrition,
-                isMeal = isMeal
+                isMeal = isMeal,
+                excluded = excluded
             });
         }
 
@@ -194,6 +200,7 @@ public struct FoodItemInfo
     public int count;
     public float nutrition;
     public bool isMeal;
+    public bool excluded;
 }
 
 public struct SpoilingFoodInfo
