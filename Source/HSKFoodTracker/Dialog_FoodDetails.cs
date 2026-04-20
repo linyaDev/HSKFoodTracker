@@ -27,6 +27,9 @@ public class Dialog_FoodDetails : Window
         absorbInputAroundWindow = false;
     }
 
+    private static readonly Texture2D AnimalIcon = ContentFinder<Texture2D>.Get("UI/Icons/Animal", false)
+        ?? ContentFinder<Texture2D>.Get("Things/Pawn/Animal/Alphabeaver/Alphabeaver_south", false);
+
     public override void DoWindowContents(Rect inRect)
     {
         var tracker = Find.CurrentMap?.GetComponent<MapComponent_FoodTracker>();
@@ -37,7 +40,20 @@ public class Dialog_FoodDetails : Window
 
         // Title
         Text.Font = GameFont.Medium;
-        Widgets.Label(new Rect(0f, 0f, inRect.width, 35f), "FT_FoodTitle".Translate());
+        Widgets.Label(new Rect(0f, 0f, inRect.width - 30f, 35f), "FT_FoodTitle".Translate());
+
+        // Animal food button
+        Rect animalBtnRect = new Rect(inRect.width - 30f, 4f, 26f, 26f);
+        if (AnimalIcon != null)
+        {
+            GUI.color = Mouse.IsOver(animalBtnRect) ? Color.white : new Color(0.8f, 0.8f, 0.8f);
+            GUI.DrawTexture(animalBtnRect, AnimalIcon);
+            GUI.color = Color.white;
+        }
+        if (Widgets.ButtonInvisible(animalBtnRect))
+            Find.WindowStack.Add(new Dialog_AnimalFood(this));
+        TooltipHandler.TipRegion(animalBtnRect, "FT_AnimalTooltip".Translate());
+
         Text.Font = GameFont.Small;
 
         float y = 38f;

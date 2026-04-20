@@ -29,4 +29,10 @@
 	<FT_Prisoners>Заключённые</FT_Prisoners>
 	<FT_Slaves>Рабы</FT_Slaves>
 	<FT_Guests>Гости</FT_Guests>
+	<FT_AnimalTitle>Корм для животных</FT_AnimalTitle>
+	<FT_AnimalDays>Запасы корма</FT_AnimalDays>
+	<FT_AnimalConsumption>Потребление животных: {0} питательности/день</FT_AnimalConsumption>
+	<FT_FeedStocks>Запасы корма:</FT_FeedStocks>
+	<FT_AnimalList>Животные ({0}):</FT_AnimalList>
+	<FT_AnimalTooltip>Информация о корме</FT_AnimalTooltip>
 </LanguageData>

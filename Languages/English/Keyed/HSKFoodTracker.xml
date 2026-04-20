@@ -30,4 +30,10 @@
 	<FT_Prisoners>Prisoners</FT_Prisoners>
 	<FT_Slaves>Slaves</FT_Slaves>
 	<FT_Guests>Guests</FT_Guests>
+	<FT_AnimalTitle>Animal Feed</FT_AnimalTitle>
+	<FT_AnimalDays>Feed supply</FT_AnimalDays>
+	<FT_AnimalConsumption>Animal consumption: {0} nutrition/day</FT_AnimalConsumption>
+	<FT_FeedStocks>Feed stocks:</FT_FeedStocks>
+	<FT_AnimalList>Animals ({0}):</FT_AnimalList>
+	<FT_AnimalTooltip>Animal feed info</FT_AnimalTooltip>
 </LanguageData>
