@@ -27,8 +27,16 @@ public class Dialog_FoodDetails : Window
         absorbInputAroundWindow = false;
     }
 
-    private static readonly Texture2D AnimalIcon = ContentFinder<Texture2D>.Get("UI/Icons/Animal", false)
-        ?? ContentFinder<Texture2D>.Get("Things/Pawn/Animal/Alphabeaver/Alphabeaver_south", false);
+    private static Texture2D animalIcon;
+
+    private static Texture2D GetAnimalIcon()
+    {
+        if (animalIcon != null) return animalIcon;
+        var cowDef = DefDatabase<ThingDef>.GetNamedSilentFail("Cow");
+        if (cowDef?.uiIcon != null)
+            animalIcon = cowDef.uiIcon;
+        return animalIcon;
+    }
 
     public override void DoWindowContents(Rect inRect)
     {
@@ -43,12 +51,24 @@ public class Dialog_FoodDetails : Window
         Widgets.Label(new Rect(0f, 0f, inRect.width - 30f, 35f), "FT_FoodTitle".Translate());
 
         // Animal food button
-        Rect animalBtnRect = new Rect(inRect.width - 30f, 4f, 26f, 26f);
-        if (AnimalIcon != null)
+        Rect animalBtnRect = new Rect(inRect.width - 28f, 6f, 24f, 24f);
+        var icon = GetAnimalIcon();
+        if (icon != null)
         {
-            GUI.color = Mouse.IsOver(animalBtnRect) ? Color.white : new Color(0.8f, 0.8f, 0.8f);
-            GUI.DrawTexture(animalBtnRect, AnimalIcon);
+            GUI.color = Mouse.IsOver(animalBtnRect) ? Color.white : new Color(0.7f, 0.7f, 0.7f);
+            GUI.DrawTexture(animalBtnRect, icon);
             GUI.color = Color.white;
+        }
+        else
+        {
+            Widgets.DrawBoxSolid(animalBtnRect, Mouse.IsOver(animalBtnRect) ? new Color(0.3f, 0.3f, 0.3f, 0.8f) : new Color(0.2f, 0.2f, 0.2f, 0.6f));
+            Widgets.DrawBox(animalBtnRect, 1);
+            Text.Font = GameFont.Small;
+            Text.Anchor = TextAnchor.MiddleCenter;
+            GUI.color = new Color(0.7f, 0.85f, 1f);
+            Widgets.Label(animalBtnRect, "A");
+            GUI.color = Color.white;
+            Text.Anchor = TextAnchor.UpperLeft;
         }
         if (Widgets.ButtonInvisible(animalBtnRect))
             Find.WindowStack.Add(new Dialog_AnimalFood(this));

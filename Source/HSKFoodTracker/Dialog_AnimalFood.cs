@@ -123,7 +123,8 @@ public class Dialog_AnimalFood : Window
 
         // === Scrollable content ===
         float feedHeight = feedStocks.Count > 0 ? 26f + feedStocks.Count * 24f + 6f : 0f;
-        float animalHeight = animalInfos.Count > 0 ? 26f + animalInfos.Count * 24f + 6f : 0f;
+        int groupCount = animalInfos.Select(a => a.defName).Distinct().Count();
+        float animalHeight = animalInfos.Count > 0 ? 26f + groupCount * 24f + 6f : 0f;
         float totalListHeight = feedHeight + animalHeight + 10f;
 
         Rect outRect = new Rect(0f, y, inRect.width, inRect.height - y - 50f);
@@ -175,28 +176,43 @@ public class Dialog_AnimalFood : Window
         GUI.color = Color.white;
         rowY += 4f;
 
-        // === Animals section ===
+        // === Animals section (grouped by species) ===
         if (animalInfos.Count > 0)
         {
+            var grouped = animalInfos
+                .GroupBy(a => a.defName)
+                .Select(g => {
+                    var def = DefDatabase<ThingDef>.GetNamedSilentFail(g.Key);
+                    return new { label = def?.LabelCap ?? g.First().pawnName, defName = g.Key, count = g.Count(), totalDaily = g.Sum(a => a.dailyNutrition) };
+                })
+                .OrderByDescending(g => g.totalDaily)
+                .ToList();
+
             GUI.color = AnimalColor;
             Widgets.Label(new Rect(0f, rowY, viewRect.width, 24f),
                 "FT_AnimalList".Translate(animalInfos.Count));
             GUI.color = Color.white;
             rowY += 26f;
 
-            for (int i = 0; i < animalInfos.Count; i++)
+            for (int i = 0; i < grouped.Count; i++)
             {
-                var info = animalInfos[i];
+                var g = grouped[i];
                 Rect rowRect = new Rect(0f, rowY, viewRect.width, 22f);
                 if (i % 2 == 0)
                     Widgets.DrawBoxSolid(rowRect, RowBg);
 
-                Widgets.Label(new Rect(15f, rowY, viewRect.width * 0.6f, 22f), info.pawnName);
+                // Icon
+                ThingDef def = DefDatabase<ThingDef>.GetNamedSilentFail(g.defName);
+                if (def != null)
+                    Widgets.ThingIcon(new Rect(4f, rowY + 1f, 20f, 20f), def);
+
+                string label = g.count > 1 ? g.label + " x" + g.count : g.label;
+                Widgets.Label(new Rect(28f, rowY, viewRect.width * 0.55f, 22f), label);
 
                 GUI.color = DimText;
                 Text.Anchor = TextAnchor.MiddleRight;
                 Widgets.Label(new Rect(viewRect.width - 130f, rowY, 120f, 22f),
-                    info.dailyNutrition.ToString("F2") + " / " + "FT_PerDay".Translate());
+                    g.totalDaily.ToString("F2") + " / " + "FT_PerDay".Translate());
                 Text.Anchor = TextAnchor.UpperLeft;
                 GUI.color = Color.white;
 
