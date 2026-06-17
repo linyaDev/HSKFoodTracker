@@ -36,4 +36,6 @@
 	<FT_FeedStocks>Feed stocks:</FT_FeedStocks>
 	<FT_AnimalList>Animals ({0}):</FT_AnimalList>
 	<FT_AnimalTooltip>Animal feed info</FT_AnimalTooltip>
+	<FT_ShowAnimalsInWidget>Show animal feed in widget</FT_ShowAnimalsInWidget>
+	<FT_WidgetAnimals>Animals: {0} days</FT_WidgetAnimals>
 </LanguageData>

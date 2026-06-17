@@ -127,7 +127,7 @@ public class Dialog_AnimalFood : Window
         float animalHeight = animalInfos.Count > 0 ? 26f + groupCount * 24f + 6f : 0f;
         float totalListHeight = feedHeight + animalHeight + 10f;
 
-        Rect outRect = new Rect(0f, y, inRect.width, inRect.height - y - 50f);
+        Rect outRect = new Rect(0f, y, inRect.width, inRect.height - y - 50f - 28f);
         Rect viewRect = new Rect(0f, 0f, inRect.width - 16f, totalListHeight);
 
         Widgets.BeginScrollView(outRect, ref scrollPosition, viewRect);
@@ -221,13 +221,23 @@ public class Dialog_AnimalFood : Window
         }
 
         Widgets.EndScrollView();
+
+        // Checkbox: show animal feed in the on-screen widget
+        var settings = HSKFoodTrackerMod.Settings;
+        if (settings != null)
+        {
+            Rect checkRect = new Rect(0f, inRect.height - 50f - 26f, inRect.width, 24f);
+            bool show = settings.showAnimalsInWidget;
+            Widgets.CheckboxLabeled(checkRect, "FT_ShowAnimalsInWidget".Translate(), ref show);
+            if (show != settings.showAnimalsInWidget)
+            {
+                settings.showAnimalsInWidget = show;
+                settings.Write();
+            }
+        }
     }
 
-    private bool IsAnimalFeed(ThingDef def)
-    {
-        if (!def.IsNutritionGivingIngestible) return false;
-        return def.defName == "Hay" || def.defName == "Kibble" || def.defName == "Silage";
-    }
+    private bool IsAnimalFeed(ThingDef def) => MapComponent_FoodTracker.IsAnimalFeed(def);
 
     private Color GetDaysColor(float days)
     {

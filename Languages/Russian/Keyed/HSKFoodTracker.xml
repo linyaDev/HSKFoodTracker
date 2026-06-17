@@ -35,4 +35,6 @@
 	<FT_FeedStocks>Запасы корма:</FT_FeedStocks>
 	<FT_AnimalList>Животные ({0}):</FT_AnimalList>
 	<FT_AnimalTooltip>Информация о корме</FT_AnimalTooltip>
+	<FT_ShowAnimalsInWidget>Показывать корм животных в виджете</FT_ShowAnimalsInWidget>
+	<FT_WidgetAnimals>Животные: {0} дн.</FT_WidgetAnimals>
 </LanguageData>

@@ -70,7 +70,9 @@ public class FoodTrackerOverlay : GameComponent
         float days = tracker.TotalDays;
         bool hasSpoil2 = tracker.SpoilingIn2DaysNutrition >= 1f;
         bool hasSpoil5 = tracker.SpoilingIn5DaysNutrition >= 1f;
-        float height = 24f + (hasSpoil2 ? 16f : 0f) + (hasSpoil5 ? 16f : 0f);
+        bool showAnimals = HSKFoodTrackerMod.Settings?.showAnimalsInWidget == true
+                           && tracker.AnimalConsumption > 0.001f;
+        float height = 24f + (hasSpoil2 ? 16f : 0f) + (hasSpoil5 ? 16f : 0f) + (showAnimals ? 16f : 0f);
         Rect widgetRect = new Rect(pos.x, pos.y, Width, height);
 
         // Dragging
@@ -160,6 +162,17 @@ public class FoodTrackerOverlay : GameComponent
             Widgets.Label(spoilRect5, string.Format("FT_WidgetSpoil5".Translate().RawText, spoilDays5.ToString("F1")));
             if (Widgets.ButtonInvisible(spoilRect5))
                 Find.WindowStack.Add(new Dialog_SpoilingFood());
+            lineY += 16f;
+        }
+
+        // Bottom line: animal feed days
+        if (showAnimals)
+        {
+            float feedDays = tracker.AnimalFeedDays;
+            GUI.color = feedDays > 10f ? Green : (feedDays > 4f ? Yellow : Red);
+            string feedStr = feedDays >= 999f ? "∞" : feedDays.ToString("F1");
+            Rect animalRect = new Rect(widgetRect.x, lineY, widgetRect.width, 16f);
+            Widgets.Label(animalRect, string.Format("FT_WidgetAnimals".Translate().RawText, feedStr));
         }
 
         Text.Font = GameFont.Small;

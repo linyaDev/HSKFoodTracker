@@ -21,6 +21,9 @@ public class MapComponent_FoodTracker : MapComponent
     public float TotalDays;
     public float MealDays;
     public float RawDays;
+    public float AnimalConsumption;
+    public float AnimalFeedNutrition;
+    public float AnimalFeedDays;
     public List<PawnFoodInfo> PawnConsumptions = new List<PawnFoodInfo>();
     public List<FoodItemInfo> FoodItems = new List<FoodItemInfo>();
     public List<SpoilingFoodInfo> SpoilingFood = new List<SpoilingFoodInfo>();
@@ -175,6 +178,38 @@ public class MapComponent_FoodTracker : MapComponent
             MealDays = 999f;
             RawDays = 999f;
         }
+
+        RecalculateAnimals();
+    }
+
+    private void RecalculateAnimals()
+    {
+        AnimalConsumption = 0f;
+        AnimalFeedNutrition = 0f;
+
+        foreach (var animal in map.mapPawns.SpawnedColonyAnimals)
+        {
+            if (animal.needs?.food == null || animal.Dead)
+                continue;
+            float perTick = animal.needs.food.FoodFallPerTickAssumingCategory(HungerCategory.Fed);
+            AnimalConsumption += perTick * 60000f;
+        }
+
+        foreach (var kvp in map.resourceCounter.AllCountedAmounts)
+        {
+            var def = kvp.Key;
+            if (kvp.Value <= 0 || !IsAnimalFeed(def))
+                continue;
+            AnimalFeedNutrition += def.GetStatValueAbstract(StatDefOf.Nutrition) * kvp.Value;
+        }
+
+        AnimalFeedDays = AnimalConsumption > 0.001f ? AnimalFeedNutrition / AnimalConsumption : 999f;
+    }
+
+    public static bool IsAnimalFeed(ThingDef def)
+    {
+        if (!def.IsNutritionGivingIngestible) return false;
+        return def.defName == "Hay" || def.defName == "Kibble" || def.defName == "Silage";
     }
 }
 
