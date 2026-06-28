@@ -1,3 +1,4 @@
+using HarmonyLib;
 using Verse;
 
 namespace HSKFoodTracker;
@@ -7,6 +8,7 @@ public static class HSKFoodTrackerInit
 {
     static HSKFoodTrackerInit()
     {
+        new Harmony("HSKFoodTracker").PatchAll();
         Log.Message("[HSKFoodTracker] Loaded.");
     }
 }

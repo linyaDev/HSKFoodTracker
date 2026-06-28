@@ -11,6 +11,7 @@ public class MapComponent_FoodTracker : MapComponent
     private int tickCounter;
     private bool firstRun = true;
     private const int UpdateInterval = 2500;
+    public int Version { get; private set; }
 
     public float TotalNutrition;
     public float MealNutrition;
@@ -180,6 +181,7 @@ public class MapComponent_FoodTracker : MapComponent
         }
 
         RecalculateAnimals();
+        Version++;
     }
 
     private void RecalculateAnimals()

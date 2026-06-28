@@ -10,6 +10,7 @@ public class HSKFoodTrackerSettings : ModSettings
     public float widgetY = -1f;
     public List<string> excludedFoods = new List<string>();
     public bool showAnimalsInWidget = false;
+    public bool showWidget = true;
 
     public override void ExposeData()
     {
@@ -17,6 +18,7 @@ public class HSKFoodTrackerSettings : ModSettings
         Scribe_Values.Look(ref widgetY, "widgetY", -1f);
         Scribe_Collections.Look(ref excludedFoods, "excludedFoods", LookMode.Value);
         Scribe_Values.Look(ref showAnimalsInWidget, "showAnimalsInWidget", false);
+        Scribe_Values.Look(ref showWidget, "showWidget", true);
         if (excludedFoods == null) excludedFoods = new List<string>();
         base.ExposeData();
     }

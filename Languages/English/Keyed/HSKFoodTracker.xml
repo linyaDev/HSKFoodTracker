@@ -38,4 +38,5 @@
 	<FT_AnimalTooltip>Animal feed info</FT_AnimalTooltip>
 	<FT_ShowAnimalsInWidget>Show animal feed in widget</FT_ShowAnimalsInWidget>
 	<FT_WidgetAnimals>Animals: {0} days</FT_WidgetAnimals>
+	<FT_ToggleWidget>Toggle food supply widget</FT_ToggleWidget>
 </LanguageData>

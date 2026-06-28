@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -11,40 +10,95 @@ public class FoodTrackerOverlay : GameComponent
     private static readonly Color Yellow = new Color(0.9f, 0.9f, 0.3f);
     private static readonly Color Red = new Color(0.9f, 0.3f, 0.3f);
     private static readonly Color BgColor = new Color(0.1f, 0.1f, 0.1f, 0.7f);
-
-    // Fire particles
-    private struct Ember
-    {
-        public float x, y, speed, life, maxLife, size;
-    }
-    private static readonly List<Ember> embers = new List<Ember>();
-    private static float lastEmberTime;
-    private static readonly Color EmberOrange = new Color(1f, 0.6f, 0.1f);
-    private static readonly Color EmberRed = new Color(1f, 0.2f, 0.05f);
+    private static readonly Color PulseColor = new Color(1f, 0.1f, 0.1f);
+    private static readonly Color PulseBg = new Color(0.4f, 0f, 0f);
 
     private static bool dragging;
     private static Vector2 dragOffset;
     private const float Width = 175f;
 
-    private static Vector2 WidgetPos
-    {
-        get
-        {
-            var s = HSKFoodTrackerMod.Settings;
-            if (s == null) return new Vector2(200f, 200f);
-            return new Vector2(s.widgetX, s.widgetY);
-        }
-        set
-        {
-            var s = HSKFoodTrackerMod.Settings;
-            if (s == null) return;
-            s.widgetX = value.x;
-            s.widgetY = value.y;
-        }
-    }
+    // Cached display data — rebuilt only on Recalculate
+    private static int cachedVersion = -1;
+    private static string cachedLine1;
+    private static string cachedSpoil2;
+    private static string cachedSpoil5;
+    private static string cachedAnimals;
+    private static string cachedTooltip;
+    private static Color cachedMainColor;
+    private static Color cachedAnimalColor;
+    private static bool cachedNoMeals;
+    private static bool cachedHasSpoil2;
+    private static bool cachedHasSpoil5;
+    private static bool cachedShowAnimals;
+    private static float cachedHeight;
 
     public FoodTrackerOverlay(Game game) : base()
     {
+    }
+
+    private static void RebuildCache(MapComponent_FoodTracker tracker)
+    {
+        int ver = tracker.Version;
+        if (ver == cachedVersion)
+            return;
+        cachedVersion = ver;
+
+        var settings = HSKFoodTrackerMod.Settings;
+        float days = tracker.TotalDays;
+
+        // Main color
+        cachedNoMeals = tracker.MealDays < 0.1f;
+        if (days > 10f)
+            cachedMainColor = cachedNoMeals ? Yellow : Green;
+        else if (days > 4f)
+            cachedMainColor = Yellow;
+        else
+            cachedMainColor = Red;
+
+        // Line 1
+        string mealStr = tracker.MealDays >= 999f ? "∞" : tracker.MealDays.ToString("F1");
+        string rawStr = tracker.RawDays >= 999f ? "∞" : tracker.RawDays.ToString("F1");
+        cachedLine1 = string.Format("FT_WidgetFood2".Translate().RawText, mealStr, rawStr);
+
+        // Spoil lines
+        cachedHasSpoil2 = tracker.SpoilingIn2DaysNutrition >= 1f;
+        if (cachedHasSpoil2)
+        {
+            float spoilDays = tracker.DailyConsumption > 0.01f
+                ? tracker.SpoilingIn2DaysNutrition / tracker.DailyConsumption : 0f;
+            cachedSpoil2 = string.Format("FT_WidgetSpoil2".Translate().RawText, spoilDays.ToString("F1"));
+        }
+
+        cachedHasSpoil5 = tracker.SpoilingIn5DaysNutrition >= 1f;
+        if (cachedHasSpoil5)
+        {
+            float spoilDays5 = tracker.DailyConsumption > 0.01f
+                ? tracker.SpoilingIn5DaysNutrition / tracker.DailyConsumption : 0f;
+            cachedSpoil5 = string.Format("FT_WidgetSpoil5".Translate().RawText, spoilDays5.ToString("F1"));
+        }
+
+        // Animals
+        cachedShowAnimals = settings?.showAnimalsInWidget == true && tracker.AnimalConsumption > 0.001f;
+        if (cachedShowAnimals)
+        {
+            float feedDays = tracker.AnimalFeedDays;
+            cachedAnimalColor = feedDays > 10f ? Green : (feedDays > 4f ? Yellow : Red);
+            string feedStr = feedDays >= 999f ? "∞" : feedDays.ToString("F1");
+            cachedAnimals = string.Format("FT_WidgetAnimals".Translate().RawText, feedStr);
+        }
+
+        // Tooltip
+        cachedTooltip = "FT_WidgetTooltip".Translate(
+            tracker.MealDays.ToString("F1"),
+            tracker.RawDays.ToString("F1"),
+            tracker.DailyConsumption.ToString("F1"))
+            + "\n\n" + "FT_DragHint".Translate();
+
+        // Height
+        cachedHeight = 24f
+            + (cachedHasSpoil2 ? 16f : 0f)
+            + (cachedHasSpoil5 ? 16f : 0f)
+            + (cachedShowAnimals ? 16f : 0f);
     }
 
     public override void GameComponentOnGUI()
@@ -52,51 +106,57 @@ public class FoodTrackerOverlay : GameComponent
         if (Current.ProgramState != ProgramState.Playing)
             return;
 
-        if (Find.CurrentMap == null)
+        if (HSKFoodTrackerMod.Settings?.showWidget != true)
             return;
 
-        var tracker = Find.CurrentMap.GetComponent<MapComponent_FoodTracker>();
+        var map = Find.CurrentMap;
+        if (map == null)
+            return;
+
+        var tracker = map.GetComponent<MapComponent_FoodTracker>();
         if (tracker == null)
             return;
 
-        // Default position
-        var pos = WidgetPos;
-        if (pos.x < 0f)
+        RebuildCache(tracker);
+
+        // Position
+        var settings = HSKFoodTrackerMod.Settings;
+        float posX = settings.widgetX;
+        float posY = settings.widgetY;
+        if (posX < 0f)
         {
-            pos = new Vector2(200f, 200f);
-            WidgetPos = pos;
+            posX = 200f;
+            posY = 200f;
+            settings.widgetX = posX;
+            settings.widgetY = posY;
         }
 
-        float days = tracker.TotalDays;
-        bool hasSpoil2 = tracker.SpoilingIn2DaysNutrition >= 1f;
-        bool hasSpoil5 = tracker.SpoilingIn5DaysNutrition >= 1f;
-        bool showAnimals = HSKFoodTrackerMod.Settings?.showAnimalsInWidget == true
-                           && tracker.AnimalConsumption > 0.001f;
-        float height = 24f + (hasSpoil2 ? 16f : 0f) + (hasSpoil5 ? 16f : 0f) + (showAnimals ? 16f : 0f);
-        Rect widgetRect = new Rect(pos.x, pos.y, Width, height);
+        Rect widgetRect = new Rect(posX, posY, Width, cachedHeight);
 
         // Dragging
-        if (Event.current.type == EventType.MouseDown && Mouse.IsOver(widgetRect) && Event.current.button == 1)
+        var evt = Event.current;
+        if (evt.type == EventType.MouseDown && Mouse.IsOver(widgetRect) && evt.button == 1)
         {
             dragging = true;
-            dragOffset = Event.current.mousePosition - pos;
-            Event.current.Use();
+            dragOffset = evt.mousePosition - new Vector2(posX, posY);
+            evt.Use();
         }
         if (dragging)
         {
-            if (Event.current.type == EventType.MouseDrag || Event.current.type == EventType.MouseMove)
+            if (evt.type == EventType.MouseDrag || evt.type == EventType.MouseMove)
             {
-                pos = Event.current.mousePosition - dragOffset;
-                pos.x = Mathf.Clamp(pos.x, 0f, UI.screenWidth - Width);
-                pos.y = Mathf.Clamp(pos.y, 0f, UI.screenHeight - height);
-                WidgetPos = pos;
-                widgetRect = new Rect(pos.x, pos.y, Width, height);
+                var newPos = evt.mousePosition - dragOffset;
+                posX = Mathf.Clamp(newPos.x, 0f, UI.screenWidth - Width);
+                posY = Mathf.Clamp(newPos.y, 0f, UI.screenHeight - cachedHeight);
+                settings.widgetX = posX;
+                settings.widgetY = posY;
+                widgetRect = new Rect(posX, posY, Width, cachedHeight);
             }
-            if (Event.current.type == EventType.MouseUp && Event.current.button == 1)
+            if (evt.type == EventType.MouseUp && evt.button == 1)
             {
                 dragging = false;
-                HSKFoodTrackerMod.Settings?.Write();
-                Event.current.Use();
+                settings.Write();
+                evt.Use();
             }
         }
 
@@ -104,75 +164,52 @@ public class FoodTrackerOverlay : GameComponent
         Widgets.DrawBoxSolid(widgetRect, BgColor);
         Widgets.DrawBox(widgetRect, 1);
 
-        // Color based on days
-        bool noMeals = tracker.MealDays < 0.1f;
-        if (days > 10f)
-            GUI.color = noMeals ? Yellow : Green;
-        else if (days > 4f)
-            GUI.color = Yellow;
-        else if (days > 0.1f)
-            GUI.color = Red;
-        else
-            GUI.color = Red;
-
-        // Pulsing + embers when no cooked meals
-        if (noMeals)
+        // Main color + pulse
+        GUI.color = cachedMainColor;
+        if (cachedNoMeals)
         {
             float pulse = Mathf.PingPong(Time.realtimeSinceStartup * 2f, 1f);
-            GUI.color = Color.Lerp(GUI.color, new Color(1f, 0.1f, 0.1f), pulse * 0.5f);
-            Widgets.DrawBoxSolid(widgetRect, new Color(0.4f, 0f, 0f, 0.15f * pulse));
-            SpawnEmbers(widgetRect);
+            GUI.color = Color.Lerp(cachedMainColor, PulseColor, pulse * 0.5f);
+            var bg = PulseBg;
+            bg.a = 0.15f * pulse;
+            Widgets.DrawBoxSolid(widgetRect, bg);
         }
-
-        // Update and draw embers
-        DrawEmbers();
 
         // Line 1: Food days
         Text.Font = GameFont.Small;
         Text.Anchor = TextAnchor.MiddleCenter;
-
-        string mealStr = tracker.MealDays >= 999f ? "∞" : tracker.MealDays.ToString("F1");
-        string rawStr = tracker.RawDays >= 999f ? "∞" : tracker.RawDays.ToString("F1");
-        Rect line1 = new Rect(widgetRect.x, widgetRect.y + 2f, widgetRect.width, 20f);
-        Widgets.Label(line1, string.Format("FT_WidgetFood2".Translate().RawText, mealStr, rawStr));
+        Widgets.Label(new Rect(widgetRect.x, widgetRect.y + 2f, Width, 20f), cachedLine1);
 
         float lineY = widgetRect.y + 22f;
         Text.Font = GameFont.Tiny;
 
         // Line 2: Spoiling in 2 days
-        if (hasSpoil2)
+        if (cachedHasSpoil2)
         {
             GUI.color = Red;
-            Rect spoilRect = new Rect(widgetRect.x, lineY, widgetRect.width, 16f);
-            float spoilDays = tracker.DailyConsumption > 0.01f
-                ? tracker.SpoilingIn2DaysNutrition / tracker.DailyConsumption : 0f;
-            Widgets.Label(spoilRect, string.Format("FT_WidgetSpoil2".Translate().RawText, spoilDays.ToString("F1")));
+            Rect spoilRect = new Rect(widgetRect.x, lineY, Width, 16f);
+            Widgets.Label(spoilRect, cachedSpoil2);
             if (Widgets.ButtonInvisible(spoilRect))
                 Find.WindowStack.Add(new Dialog_SpoilingFood());
             lineY += 16f;
         }
 
         // Line 3: Spoiling in 5 days
-        if (hasSpoil5)
+        if (cachedHasSpoil5)
         {
             GUI.color = Yellow;
-            Rect spoilRect5 = new Rect(widgetRect.x, lineY, widgetRect.width, 16f);
-            float spoilDays5 = tracker.DailyConsumption > 0.01f
-                ? tracker.SpoilingIn5DaysNutrition / tracker.DailyConsumption : 0f;
-            Widgets.Label(spoilRect5, string.Format("FT_WidgetSpoil5".Translate().RawText, spoilDays5.ToString("F1")));
+            Rect spoilRect5 = new Rect(widgetRect.x, lineY, Width, 16f);
+            Widgets.Label(spoilRect5, cachedSpoil5);
             if (Widgets.ButtonInvisible(spoilRect5))
                 Find.WindowStack.Add(new Dialog_SpoilingFood());
             lineY += 16f;
         }
 
         // Bottom line: animal feed days
-        if (showAnimals)
+        if (cachedShowAnimals)
         {
-            float feedDays = tracker.AnimalFeedDays;
-            GUI.color = feedDays > 10f ? Green : (feedDays > 4f ? Yellow : Red);
-            string feedStr = feedDays >= 999f ? "∞" : feedDays.ToString("F1");
-            Rect animalRect = new Rect(widgetRect.x, lineY, widgetRect.width, 16f);
-            Widgets.Label(animalRect, string.Format("FT_WidgetAnimals".Translate().RawText, feedStr));
+            GUI.color = cachedAnimalColor;
+            Widgets.Label(new Rect(widgetRect.x, lineY, Width, 16f), cachedAnimals);
         }
 
         Text.Font = GameFont.Small;
@@ -181,66 +218,13 @@ public class FoodTrackerOverlay : GameComponent
 
         // Left-click to open details
         if (Widgets.ButtonInvisible(widgetRect) && !dragging)
-        {
             Find.WindowStack.Add(new Dialog_FoodDetails());
-        }
 
         // Tooltip
         if (Mouse.IsOver(widgetRect))
         {
             Widgets.DrawHighlight(widgetRect);
-            TooltipHandler.TipRegion(widgetRect, "FT_WidgetTooltip".Translate(
-                tracker.MealDays.ToString("F1"),
-                tracker.RawDays.ToString("F1"),
-                tracker.DailyConsumption.ToString("F1"))
-                + "\n\n" + "FT_DragHint".Translate());
+            TooltipHandler.TipRegion(widgetRect, cachedTooltip);
         }
-    }
-
-    private static void SpawnEmbers(Rect widgetRect)
-    {
-        float now = Time.realtimeSinceStartup;
-        if (now - lastEmberTime < 0.15f)
-            return;
-        lastEmberTime = now;
-
-        embers.Add(new Ember
-        {
-            x = widgetRect.x + Random.Range(5f, widgetRect.width - 5f),
-            y = widgetRect.yMax,
-            speed = Random.Range(15f, 35f),
-            life = 0f,
-            maxLife = Random.Range(0.8f, 1.5f),
-            size = Random.Range(3f, 6f)
-        });
-    }
-
-    private static void DrawEmbers()
-    {
-        if (embers.Count == 0)
-            return;
-
-        float dt = Time.deltaTime;
-        for (int i = embers.Count - 1; i >= 0; i--)
-        {
-            var e = embers[i];
-            e.life += dt;
-            if (e.life >= e.maxLife)
-            {
-                embers.RemoveAt(i);
-                continue;
-            }
-            e.y += e.speed * dt;
-            e.x += Mathf.Sin(e.life * 5f) * 0.5f;
-            embers[i] = e;
-
-            float t = e.life / e.maxLife;
-            Color c = Color.Lerp(EmberOrange, EmberRed, t);
-            c.a = 1f - t;
-            float s = e.size * (1f - t * 0.5f);
-            GUI.color = c;
-            Widgets.DrawBoxSolid(new Rect(e.x - s / 2f, e.y - s / 2f, s, s), c);
-        }
-        GUI.color = Color.white;
     }
 }
