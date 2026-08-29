@@ -23,6 +23,7 @@ public class Dialog_SpoilingFood : Window
         doCloseX = true;
         draggable = true;
         absorbInputAroundWindow = false;
+        preventCameraMotion = false;
     }
 
     public override void DoWindowContents(Rect inRect)

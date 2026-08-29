@@ -25,6 +25,7 @@ public class Dialog_FoodDetails : Window
         doCloseX = true;
         draggable = true;
         absorbInputAroundWindow = false;
+        preventCameraMotion = false;
     }
 
     private static Texture2D animalIcon;

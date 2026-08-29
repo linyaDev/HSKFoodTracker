@@ -27,6 +27,7 @@ public class Dialog_AnimalFood : Window
         doCloseX = true;
         draggable = true;
         absorbInputAroundWindow = false;
+        preventCameraMotion = false;
     }
 
     public override void SetInitialSizeAndPosition()
