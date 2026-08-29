@@ -199,7 +199,6 @@ public class FoodTrackerOverlay : GameComponent
 
         // === Repaint only below ===
         Widgets.DrawBoxSolid(widgetRect, BgColor);
-        Widgets.DrawBox(widgetRect, 1);
 
         GUI.color = cachedMainColor;
         if (cachedNoMeals)
