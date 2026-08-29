@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
 using UnityEngine;
@@ -146,8 +146,7 @@ public class Dialog_AnimalFood : Window
             {
                 var feed = feedStocks[i];
                 Rect rowRect = new Rect(0f, rowY, viewRect.width, 22f);
-                if (i % 2 == 0)
-                    Widgets.DrawBoxSolid(rowRect, RowBg);
+                Widgets.DrawBoxSolid(rowRect, RowBg);
 
                 Text.Anchor = TextAnchor.MiddleRight;
                 Widgets.Label(new Rect(0f, rowY, 50f, 22f), "x" + feed.count);
@@ -199,8 +198,7 @@ public class Dialog_AnimalFood : Window
             {
                 var g = grouped[i];
                 Rect rowRect = new Rect(0f, rowY, viewRect.width, 22f);
-                if (i % 2 == 0)
-                    Widgets.DrawBoxSolid(rowRect, RowBg);
+                Widgets.DrawBoxSolid(rowRect, RowBg);
 
                 // Icon
                 ThingDef def = DefDatabase<ThingDef>.GetNamedSilentFail(g.defName);

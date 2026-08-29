@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
 using UnityEngine;
@@ -218,8 +218,7 @@ public class Dialog_FoodDetails : Window
             var info = group[i];
             Rect rowRect = new Rect(0f, rowY, width, 22f);
 
-            if (i % 2 == 0)
-                Widgets.DrawBoxSolid(rowRect, RowBg);
+            Widgets.DrawBoxSolid(rowRect, RowBg);
 
             Widgets.Label(new Rect(15f, rowY, width * 0.6f, 22f), info.pawnName);
 
@@ -245,8 +244,7 @@ public class Dialog_FoodDetails : Window
             var food = items[i];
             Rect rowRect = new Rect(0f, rowY, width, 22f);
 
-            if (i % 2 == 0)
-                Widgets.DrawBoxSolid(rowRect, RowBg);
+            Widgets.DrawBoxSolid(rowRect, RowBg);
 
             // Count (right-aligned in 50px, fits x9999)
             Text.Anchor = TextAnchor.MiddleRight;

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
 using UnityEngine;
@@ -106,8 +106,7 @@ public class Dialog_SpoilingFood : Window
             var item = items[i];
             Rect rowRect = new Rect(0f, rowY, width, 22f);
 
-            if (i % 2 == 0)
-                Widgets.DrawBoxSolid(rowRect, RowBg);
+            Widgets.DrawBoxSolid(rowRect, RowBg);
 
             // Quantity + icon + name (aligned)
             GUI.color = labelColor;
