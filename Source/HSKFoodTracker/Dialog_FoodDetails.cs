@@ -16,6 +16,8 @@ public class Dialog_FoodDetails : Window
     private static readonly Color DimText = new Color(1f, 1f, 1f, 0.5f);
     private static readonly Color RowBg = new Color(0f, 0f, 0f, 0.25f);
     private static readonly Color SectionBg = new Color(0f, 0f, 0f, 0.35f);
+    // Soft ink instead of pure white text
+    private static readonly Color InkColor = new Color(0.85f, 0.85f, 0.85f);
 
     public override Vector2 InitialSize => new Vector2(520f, 600f);
 
@@ -222,7 +224,9 @@ public class Dialog_FoodDetails : Window
 
             Widgets.DrawBoxSolid(rowRect, RowBg);
 
+            GUI.color = InkColor;
             Widgets.Label(new Rect(15f, rowY, width * 0.6f, 22f), info.pawnName);
+            GUI.color = Color.white;
 
             GUI.color = DimText;
             Text.Anchor = TextAnchor.MiddleRight;
@@ -259,7 +263,9 @@ public class Dialog_FoodDetails : Window
                 Widgets.ThingIcon(new Rect(54f, rowY + 1f, 20f, 20f), def);
 
             // Name — aligned
+            GUI.color = InkColor;
             Widgets.Label(new Rect(78f, rowY, width * 0.38f, 22f), food.label);
+            GUI.color = Color.white;
 
             GUI.color = food.excluded ? DimText : labelColor;
             Text.Anchor = TextAnchor.MiddleRight;
