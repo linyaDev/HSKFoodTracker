@@ -6,9 +6,10 @@ namespace HSKFoodTracker;
 
 public class FoodTrackerOverlay : GameComponent
 {
-    private static readonly Color Green = new Color(0.3f, 0.9f, 0.3f);
-    private static readonly Color Yellow = new Color(0.9f, 0.9f, 0.3f);
-    private static readonly Color Red = new Color(0.9f, 0.3f, 0.3f);
+    // EPrime's Readouts palette: muted green / LowTint / CriticalTint
+    private static readonly Color Green = new Color(0.55f, 0.78f, 0.45f);
+    private static readonly Color Yellow = new Color(1f, 0.92f, 0.55f);
+    private static readonly Color Red = new Color(1f, 0.72f, 0.45f);
     private static readonly Color BgColor = new Color(0.08f, 0.08f, 0.08f, 0.9f);
     private static readonly Color PulseColor = new Color(1f, 0.1f, 0.1f);
     private static readonly Color PulseBg = new Color(0.4f, 0f, 0f);
