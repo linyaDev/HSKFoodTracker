@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
 using UnityEngine;
@@ -95,7 +95,7 @@ public class Dialog_AnimalFood : Window
         float totalFeedNutrition = feedStocks.Sum(f => f.nutrition);
         float feedDays = totalAnimalConsumption > 0.001f ? totalFeedNutrition / totalAnimalConsumption : 999f;
 
-        // === Total days вЂ” big ===
+        // === Total days — big ===
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleCenter;
         GUI.color = GetDaysColor(feedDays);
