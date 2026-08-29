@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
 using UnityEngine;
@@ -15,7 +15,7 @@ public class Dialog_AnimalFood : Window
     private static readonly Color YellowText = new Color(0.95f, 0.95f, 0.4f);
     private static readonly Color RedText = new Color(0.95f, 0.4f, 0.4f);
     private static readonly Color DimText = new Color(1f, 1f, 1f, 0.5f);
-    private static readonly Color RowBg = new Color(0.2f, 0.2f, 0.2f, 0.3f);
+    private static readonly Color RowBg = new Color(0f, 0f, 0f, 0.25f);
     private static readonly Color AnimalColor = new Color(0.7f, 0.85f, 1f);
 
     public override Vector2 InitialSize => new Vector2(420f, 500f);
@@ -95,7 +95,7 @@ public class Dialog_AnimalFood : Window
         float totalFeedNutrition = feedStocks.Sum(f => f.nutrition);
         float feedDays = totalAnimalConsumption > 0.001f ? totalFeedNutrition / totalAnimalConsumption : 999f;
 
-        // === Total days — big ===
+        // === Total days вЂ” big ===
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleCenter;
         GUI.color = GetDaysColor(feedDays);

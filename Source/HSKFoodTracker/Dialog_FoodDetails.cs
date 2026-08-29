@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
 using UnityEngine;
@@ -14,8 +14,8 @@ public class Dialog_FoodDetails : Window
     private static readonly Color YellowText = new Color(0.95f, 0.95f, 0.4f);
     private static readonly Color RedText = new Color(0.95f, 0.4f, 0.4f);
     private static readonly Color DimText = new Color(1f, 1f, 1f, 0.5f);
-    private static readonly Color RowBg = new Color(0.2f, 0.2f, 0.2f, 0.3f);
-    private static readonly Color SectionBg = new Color(0.15f, 0.15f, 0.15f, 0.8f);
+    private static readonly Color RowBg = new Color(0f, 0f, 0f, 0.25f);
+    private static readonly Color SectionBg = new Color(0f, 0f, 0f, 0.35f);
 
     public override Vector2 InitialSize => new Vector2(520f, 600f);
 
@@ -79,11 +79,11 @@ public class Dialog_FoodDetails : Window
 
         float y = 38f;
 
-        // === Total days — big ===
+        // === Total days вЂ” big ===
         Text.Font = GameFont.Medium;
         Text.Anchor = TextAnchor.MiddleCenter;
         GUI.color = GetDaysColor(tracker.TotalDays);
-        string totalStr = tracker.TotalDays >= 999f ? "∞" : tracker.TotalDays.ToString("F1");
+        string totalStr = tracker.TotalDays >= 999f ? "в€ћ" : tracker.TotalDays.ToString("F1");
         Widgets.Label(new Rect(0f, y, inRect.width, 30f),
             "FT_TotalDays".Translate() + ": " + totalStr + " " + "FT_Days".Translate());
         GUI.color = Color.white;
@@ -96,12 +96,12 @@ public class Dialog_FoodDetails : Window
         Text.Anchor = TextAnchor.MiddleCenter;
 
         GUI.color = GetDaysColor(tracker.MealDays);
-        string mealStr = tracker.MealDays >= 999f ? "∞" : tracker.MealDays.ToString("F1");
+        string mealStr = tracker.MealDays >= 999f ? "в€ћ" : tracker.MealDays.ToString("F1");
         Widgets.Label(new Rect(0f, y, halfW, 22f),
             "FT_MealDays".Translate() + ": " + mealStr + " (" + tracker.MealNutrition.ToString("F0") + " " + "FT_Nutr".Translate() + ")");
 
         GUI.color = GetDaysColor(tracker.RawDays);
-        string rawStr = tracker.RawDays >= 999f ? "∞" : tracker.RawDays.ToString("F1");
+        string rawStr = tracker.RawDays >= 999f ? "в€ћ" : tracker.RawDays.ToString("F1");
         Widgets.Label(new Rect(halfW, y, halfW, 22f),
             "FT_RawDays".Translate() + ": " + rawStr + " (" + tracker.RawNutrition.ToString("F0") + " " + "FT_Nutr".Translate() + ")");
 
@@ -209,7 +209,7 @@ public class Dialog_FoodDetails : Window
 
         GUI.color = catColor;
         Widgets.Label(new Rect(0f, rowY, width, 24f),
-            labelKey.Translate() + " (" + group.Count + ") — " + groupTotal.ToString("F2") + " / " + "FT_PerDay".Translate());
+            labelKey.Translate() + " (" + group.Count + ") вЂ” " + groupTotal.ToString("F2") + " / " + "FT_PerDay".Translate());
         GUI.color = Color.white;
         rowY += 26f;
 
@@ -258,7 +258,7 @@ public class Dialog_FoodDetails : Window
             if (def != null)
                 Widgets.ThingIcon(new Rect(54f, rowY + 1f, 20f, 20f), def);
 
-            // Name — aligned
+            // Name вЂ” aligned
             Widgets.Label(new Rect(78f, rowY, width * 0.38f, 22f), food.label);
 
             GUI.color = food.excluded ? DimText : labelColor;
@@ -274,7 +274,7 @@ public class Dialog_FoodDetails : Window
             if (Widgets.ButtonInvisible(rowRect) && JumpToThing.TryJump(food.defName))
                 Close();
 
-            // Checkbox — include in calculation
+            // Checkbox вЂ” include in calculation
             bool included = !food.excluded;
             Rect cbRect = new Rect(width - 26f, rowY + 2f, 18f, 18f);
             Widgets.Checkbox(cbRect.position, ref included, 18f);
