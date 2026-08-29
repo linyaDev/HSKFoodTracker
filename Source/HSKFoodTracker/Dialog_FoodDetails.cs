@@ -63,7 +63,9 @@ public class Dialog_FoodDetails : Window
         else
         {
             Widgets.DrawBoxSolid(animalBtnRect, Mouse.IsOver(animalBtnRect) ? new Color(0.3f, 0.3f, 0.3f, 0.8f) : new Color(0.2f, 0.2f, 0.2f, 0.6f));
+            GUI.color = new Color(1f, 1f, 1f, 0.15f);
             Widgets.DrawBox(animalBtnRect, 1);
+            GUI.color = Color.white;
             Text.Font = GameFont.Small;
             Text.Anchor = TextAnchor.MiddleCenter;
             GUI.color = new Color(0.7f, 0.85f, 1f);
