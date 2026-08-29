@@ -253,9 +253,11 @@ public class Dialog_FoodDetails : Window
             Widgets.DrawBoxSolid(rowRect, RowBg);
 
             // Count (right-aligned in 50px, fits x9999)
+            GUI.color = InkColor;
             Text.Anchor = TextAnchor.MiddleRight;
             Widgets.Label(new Rect(0f, rowY, 50f, 22f), "x" + food.count);
             Text.Anchor = TextAnchor.UpperLeft;
+            GUI.color = Color.white;
 
             // Icon
             ThingDef def = DefDatabase<ThingDef>.GetNamedSilentFail(food.defName);

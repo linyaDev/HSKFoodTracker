@@ -16,6 +16,8 @@ public class Dialog_AnimalFood : Window
     private static readonly Color RedText = new Color(0.95f, 0.4f, 0.4f);
     private static readonly Color DimText = new Color(1f, 1f, 1f, 0.5f);
     private static readonly Color RowBg = new Color(0f, 0f, 0f, 0.25f);
+    // Soft ink instead of pure white text
+    private static readonly Color InkColor = new Color(0.85f, 0.85f, 0.85f);
     private static readonly Color AnimalColor = new Color(0.7f, 0.85f, 1f);
 
     public override Vector2 InitialSize => new Vector2(420f, 500f);
@@ -148,15 +150,19 @@ public class Dialog_AnimalFood : Window
                 Rect rowRect = new Rect(0f, rowY, viewRect.width, 22f);
                 Widgets.DrawBoxSolid(rowRect, RowBg);
 
+                GUI.color = InkColor;
                 Text.Anchor = TextAnchor.MiddleRight;
                 Widgets.Label(new Rect(0f, rowY, 50f, 22f), "x" + feed.count);
                 Text.Anchor = TextAnchor.UpperLeft;
+                GUI.color = Color.white;
 
                 ThingDef def = DefDatabase<ThingDef>.GetNamedSilentFail(feed.defName);
                 if (def != null)
                     Widgets.ThingIcon(new Rect(54f, rowY + 1f, 20f, 20f), def);
 
+                GUI.color = InkColor;
                 Widgets.Label(new Rect(78f, rowY, viewRect.width * 0.4f, 22f), feed.label);
+                GUI.color = Color.white;
 
                 GUI.color = GreenText;
                 Text.Anchor = TextAnchor.MiddleRight;
@@ -206,7 +212,9 @@ public class Dialog_AnimalFood : Window
                     Widgets.ThingIcon(new Rect(4f, rowY + 1f, 20f, 20f), def);
 
                 string label = g.count > 1 ? g.label + " x" + g.count : g.label;
+                GUI.color = InkColor;
                 Widgets.Label(new Rect(28f, rowY, viewRect.width * 0.55f, 22f), label);
+                GUI.color = Color.white;
 
                 GUI.color = DimText;
                 Text.Anchor = TextAnchor.MiddleRight;
