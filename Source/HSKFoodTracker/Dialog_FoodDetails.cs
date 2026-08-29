@@ -268,11 +268,11 @@ public class Dialog_FoodDetails : Window
             Text.Anchor = TextAnchor.UpperLeft;
             GUI.color = Color.white;
 
-            // Click: jump to the item on the map
+            // Click: jump to the item on the map (window stays open)
             if (Mouse.IsOver(rowRect))
                 Widgets.DrawHighlight(rowRect);
-            if (Widgets.ButtonInvisible(rowRect) && JumpToThing.TryJump(food.defName))
-                Close();
+            if (Widgets.ButtonInvisible(rowRect))
+                JumpToThing.TryJump(food.defName);
 
             // Checkbox — include in calculation
             bool included = !food.excluded;
