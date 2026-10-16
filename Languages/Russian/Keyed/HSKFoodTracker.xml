@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+	<FT_WidgetFood>Еда: {0} дн.</FT_WidgetFood>
+	<FT_WidgetFood2>Еда на {0} / {1} дн.</FT_WidgetFood2>
+	<FT_WidgetTooltip>Готовая: {0} дн.\nСырая: {1} дн.\nПотребление: {2}/день</FT_WidgetTooltip>
+	<FT_FoodTitle>Запасы еды</FT_FoodTitle>
+	<FT_TotalDays>Всего запасов</FT_TotalDays>
+	<FT_Days>дн.</FT_Days>
+	<FT_MealDays>Готовая еда</FT_MealDays>
+	<FT_RawDays>Сырая еда</FT_RawDays>
+	<FT_DailyTotal>Потребление колонии: {0} питательности/день</FT_DailyTotal>
+	<FT_PerDay>день</FT_PerDay>
+	<FT_FoodInventory>Еда на карте:</FT_FoodInventory>
+	<FT_MealsList>Готовые блюда:</FT_MealsList>
+	<FT_RawList>Сырая еда:</FT_RawList>
+	<FT_Nutr>пит.</FT_Nutr>
+	<FT_DragHint>ПКМ + перетаскивание для перемещения</FT_DragHint>
+	<FT_SpoilingList>Скоро испортится:</FT_SpoilingList>
+	<FT_WidgetSpoil2d>Испорт.: {0} пит. за 2д</FT_WidgetSpoil2d>
+	<FT_WidgetSpoil>Исп. еды на: {0} дн.</FT_WidgetSpoil>
+	<FT_WidgetSpoil2>Исп. еды за 2дн.: на {0} дн.</FT_WidgetSpoil2>
+	<FT_WidgetSpoil5>Исп. еды за 5дн.: на {0} дн.</FT_WidgetSpoil5>
+	<FT_SpoilingTitle>Скоропортящаяся еда</FT_SpoilingTitle>
+	<FT_SpoilIn2d>2 дня: {0} пит.</FT_SpoilIn2d>
+	<FT_SpoilIn5d>5 дней: {0} пит.</FT_SpoilIn5d>
+	<FT_Within2Days>В течение 2 дней:</FT_Within2Days>
+	<FT_Within5Days>В течение 5 дней:</FT_Within5Days>
+	<FT_Colonists>Колонисты</FT_Colonists>
+	<FT_Prisoners>Заключённые</FT_Prisoners>
+	<FT_Slaves>Рабы</FT_Slaves>
+	<FT_Guests>Гости</FT_Guests>
+	<FT_AnimalTitle>Корм для животных</FT_AnimalTitle>
+	<FT_AnimalDays>Запасы корма</FT_AnimalDays>
+	<FT_AnimalConsumption>Потребление животных: {0} питательности/день</FT_AnimalConsumption>
+	<FT_FeedStocks>Запасы корма:</FT_FeedStocks>
+	<FT_AnimalList>Животные ({0}):</FT_AnimalList>
+	<FT_AnimalTooltip>Информация о корме</FT_AnimalTooltip>
+	<FT_ShowAnimalsInWidget>Показывать корм животных в виджете</FT_ShowAnimalsInWidget>
+	<FT_WidgetAnimals>Животные: {0} дн.</FT_WidgetAnimals>
+	<FT_ToggleWidget>Показать/скрыть виджет запасов еды</FT_ToggleWidget>
+</LanguageData>
